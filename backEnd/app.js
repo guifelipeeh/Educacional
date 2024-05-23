@@ -2,9 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const db = require('./config/database');
-const authRoutes = require('./routes/auth');
-const cursosRoutes = require('./routes/cursos');
-const uploadRoutes = require('./routes/upload');
+const authRoutes = require('./routes/authRoutes');
+const usuarioRoutes = require('./routes/usuarioRoutes');
+const cursoRoutes = require('./routes/cursoRoutes');
+const aulaRoutes = require('./routes/aulaRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
+const categoriaRoutes = require('./routes/categoriaRoutes');
+const avaliacaoRoutes = require('./routes/avaliacaoRoutes');
 
 // Carrega as variáveis de ambiente do arquivo .env
 dotenv.config();
@@ -17,22 +21,26 @@ app.use(cors());
 // Middleware para interpretar o corpo das requisições como JSON
 app.use(express.json());
 
-// Rotas da autenticação
-app.use('/auth', authRoutes);
-
-// Rotas dos cursos
-app.use('/cursos', cursosRoutes);
-
-// Rota para upload de arquivos
-app.use('/upload', uploadRoutes);
+// Rotas principais
+app.use('/api/auth', authRoutes);
+app.use('/api/usuarios', usuarioRoutes);
+app.use('/api/cursos', cursoRoutes);
+app.use('/api/aulas', aulaRoutes);
+app.use('/api/uploads', uploadRoutes);
+app.use('/api/categorias', categoriaRoutes);
+app.use('/api/avaliacoes', avaliacaoRoutes);
 
 // Rota padrão
 app.get('/', (req, res) => {
   res.send('Bem-vindo à sua aplicação!');
 });
 
-// Inicia o servidor na porta especificada no arquivo .env, ou na porta 3000 por padrão
+// Sincroniza com o banco de dados e inicia o servidor
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor em execução na porta ${PORT}`);
+db.sync({ force: false }).then(() => {
+  app.listen(PORT, () => {
+    console.log(`Servidor em execução na porta ${PORT}`);
+  });
+}).catch(error => {
+  console.error('Erro ao sincronizar com o banco de dados:', error);
 });
