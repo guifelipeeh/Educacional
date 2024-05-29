@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const Usuario = require('./Usuario');
 
 const Sessao = sequelize.define('Sessao', {
   id: {
@@ -12,7 +11,7 @@ const Sessao = sequelize.define('Sessao', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: Usuario,
+      model: 'Usuarios',
       key: 'id'
     }
   },
@@ -23,13 +22,15 @@ const Sessao = sequelize.define('Sessao', {
   expiracao: {
     type: DataTypes.DATE,
     allowNull: false
+  },
+  tokenInvalido: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false // Por padrão, o token não está na lista negra
   }
 }, {
   timestamps: true,
   paranoid: true
 });
-
-Usuario.hasMany(Sessao, { foreignKey: 'usuarioId' });
-Sessao.belongsTo(Usuario, { foreignKey: 'usuarioId' });
 
 module.exports = Sessao;

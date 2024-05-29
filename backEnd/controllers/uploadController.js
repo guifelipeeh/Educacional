@@ -1,3 +1,4 @@
+// controllers/uploadController.js
 const uploadService = require('../services/uploadService');
 
 exports.uploadFotoPerfil = (req, res) => {

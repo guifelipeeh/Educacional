@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@sideway/formula": "^3.0.1",
+    "cpf-cnpj-validator": "^1.0.3",
+    "validator": "^13.12.0"
+  }
+}

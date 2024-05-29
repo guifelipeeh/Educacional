@@ -4,6 +4,7 @@ const Usuario = require('../models/Usuario');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+
 class UsuarioService {
   async cadastrarUsuario(dadosUsuario) {
     const senhaCriptografada = await bcrypt.hash(dadosUsuario.senha, 10);

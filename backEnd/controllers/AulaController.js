@@ -1,9 +1,9 @@
-const AulaService = require('../services/aulaService');
+const aulaService = require('../services/AulaService');
 
 exports.criarAula = async (req, res) => {
   try {
-    const aula = await AulaService.criarAula(req.body);
-    res.status(201).json(aula);
+    const novaAula = await aulaService.criarAula(req.body);
+    res.status(201).json(novaAula);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -11,7 +11,7 @@ exports.criarAula = async (req, res) => {
 
 exports.obterAulas = async (req, res) => {
   try {
-    const aulas = await AulaService.obterAulas();
+    const aulas = await aulaService.obterTodasAulas();
     res.status(200).json(aulas);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -20,12 +20,8 @@ exports.obterAulas = async (req, res) => {
 
 exports.obterAulaPorId = async (req, res) => {
   try {
-    const aula = await AulaService.obterAulaPorId(req.params.id);
-    if (aula) {
-      res.status(200).json(aula);
-    } else {
-      res.status(404).json({ error: 'Aula não encontrada' });
-    }
+    const aula = await aulaService.obterAulaPorId(req.params.id);
+    res.status(200).json(aula);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -33,12 +29,8 @@ exports.obterAulaPorId = async (req, res) => {
 
 exports.atualizarAula = async (req, res) => {
   try {
-    const aula = await AulaService.atualizarAula(req.params.id, req.body);
-    if (aula) {
-      res.status(200).json(aula);
-    } else {
-      res.status(404).json({ error: 'Aula não encontrada' });
-    }
+    const aula = await aulaService.atualizarAula(req.params.id, req.body);
+    res.status(200).json(aula);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -46,12 +38,8 @@ exports.atualizarAula = async (req, res) => {
 
 exports.deletarAula = async (req, res) => {
   try {
-    const aula = await AulaService.deletarAula(req.params.id);
-    if (aula) {
-      res.status(200).json({ message: 'Aula deletada com sucesso' });
-    } else {
-      res.status(404).json({ error: 'Aula não encontrada' });
-    }
+    await aulaService.deletarAula(req.params.id);
+    res.status(200).json({ message: 'Aula deletada com sucesso' });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

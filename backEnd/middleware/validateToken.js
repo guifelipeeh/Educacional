@@ -1,21 +1,22 @@
-
-
-
 const jwt = require('jsonwebtoken');
 
 function validateToken(req, res, next) {
-    // Extrair o token do cabeçalho Authorization
-    const token = req.headers.authorization;
+   
+    const authorizationHeader = req.headers.authorization;
 
-    // Verificar se o token está presente
-    if (!token) {
+   
+    if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
         return res.status(401).json({ message: 'Token de autenticação não fornecido.' });
     }
 
+
+    const token = authorizationHeader.split(' ')[1];
+
     try {
-        // Verificar se o token é válido
-        jwt.verify(token, process.env.JWT_SECRET);
-        next(); // Prosseguir para o próximo middleware
+        
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded; 
+        next(); 
     } catch (error) {
         return res.status(401).json({ message: 'Token de autenticação inválido.' });
     }
