@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const sequelize = require('../configurations/DataBaseConfig');
+const Usuario = require('./Usuario');
 
 const Sessao = sequelize.define('Sessao', {
   id: {
@@ -7,30 +8,29 @@ const Sessao = sequelize.define('Sessao', {
     autoIncrement: true,
     primaryKey: true
   },
-  usuarioId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'Usuarios',
-      key: 'id'
-    }
-  },
   token: {
     type: DataTypes.STRING,
     allowNull: false
   },
   expiracao: {
     type: DataTypes.DATE,
-    allowNull: false
-  },
-  tokenInvalido: {
-    type: DataTypes.BOOLEAN,
     allowNull: false,
-    defaultValue: false // Por padrão, o token não está na lista negra
+    defaultValue: DataTypes.NOW // Define um valor padrão para o campo 'expiracao'
+  },
+  usuarioId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Usuario,
+      key: 'id'
+    }
   }
 }, {
-  timestamps: true,
-  paranoid: true
+  timestamps: true
 });
+
+// Definição das associações
+Usuario.hasMany(Sessao, { foreignKey: 'usuarioId' });
+Sessao.belongsTo(Usuario, { foreignKey: 'usuarioId' });
 
 module.exports = Sessao;

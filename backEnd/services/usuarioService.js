@@ -1,47 +1,49 @@
-// services/usuarioService.js
-
-const Usuario = require('../models/Usuario');
+const { Sessao, Usuario } = require('../models/associations');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+exports.cadastrarUsuario = async (usuarioData) => {
+  const hash = await bcrypt.hash(usuarioData.senha, 10);
+  const usuario = await Usuario.create({ ...usuarioData, senha: hash });
+  return usuario;
+};
 
-class UsuarioService {
-  async cadastrarUsuario(dadosUsuario) {
-    const senhaCriptografada = await bcrypt.hash(dadosUsuario.senha, 10);
-    const usuario = await Usuario.create({ ...dadosUsuario, senha: senhaCriptografada });
-    return usuario;
+exports.loginUsuario = async (email, senha) => {
+  const usuario = await Usuario.findOne({ where: { email } });
+  if (!usuario) {
+    throw new Error('Usuário não encontrado');
   }
 
-  async loginUsuario(email, senha) {
-    const usuario = await Usuario.findOne({ where: { email } });
-    if (!usuario) {
-      throw new Error('Usuário não encontrado.');
-    }
-    const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
-    if (!senhaCorreta) {
-      throw new Error('Credenciais inválidas.');
-    }
-    const token = jwt.sign({ id: usuario.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    return token;
+  const isPasswordValid = await bcrypt.compare(senha, usuario.senha);
+  if (!isPasswordValid) {
+    throw new Error('Senha incorreta');
   }
 
-  async obterUsuarioPorId(id) {
-    const usuario = await Usuario.findByPk(id);
-    if (!usuario) {
-      throw new Error('Usuário não encontrado.');
-    }
-    return usuario;
-  }
+  const token = jwt.sign({ id: usuario.id }, process.env.JWT_SECRET, {
+    expiresIn: '1h'
+  });
 
-  async atualizarUsuario(id, novosDadosUsuario) {
-    await Usuario.update(novosDadosUsuario, { where: { id } });
-    const usuarioAtualizado = await Usuario.findByPk(id);
-    return usuarioAtualizado;
-  }
+  const expiracao = new Date();
+  expiracao.setHours(expiracao.getHours() + 1); // Define a expiração para 1 hora no futuro
 
-  async deletarUsuario(id) {
-    await Usuario.destroy({ where: { id } });
-  }
-}
+  await Sessao.create({
+    token,
+    expiracao,
+    usuarioId: usuario.id
+  });
 
-module.exports = new UsuarioService();
+  return token;
+};
+
+exports.obterUsuarioPorId = async (id) => {
+  return await Usuario.findByPk(id);
+};
+
+exports.atualizarUsuario = async (id, usuarioData) => {
+  await Usuario.update(usuarioData, { where: { id } });
+  return await Usuario.findByPk(id);
+};
+
+exports.deletarUsuario = async (id, transaction = null) => {
+  await Usuario.destroy({ where: { id }, transaction });
+};

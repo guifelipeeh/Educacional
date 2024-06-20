@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
-const Curso = require('./Curso');
+const sequelize = require('../configurations/DataBaseConfig');
 
 const Aula = sequelize.define('Aula', {
   id: {
@@ -24,7 +23,7 @@ const Aula = sequelize.define('Aula', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: Curso,
+      model: 'Curso',  // Use o nome do modelo como string
       key: 'id'
     }
   }
@@ -32,8 +31,5 @@ const Aula = sequelize.define('Aula', {
   timestamps: true,
   paranoid: true
 });
-
-Curso.hasMany(Aula, { foreignKey: 'cursoId' });
-Aula.belongsTo(Curso, { foreignKey: 'cursoId' });
 
 module.exports = Aula;

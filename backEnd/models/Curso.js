@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const sequelize = require('../configurations/DataBaseConfig');
 const Usuario = require('./Usuario');
 
 const Curso = sequelize.define('Curso', {
@@ -8,12 +8,20 @@ const Curso = sequelize.define('Curso', {
     autoIncrement: true,
     primaryKey: true
   },
-  titulo: {
+  nomeCurso: {
     type: DataTypes.STRING,
     allowNull: false
   },
   descricao: {
     type: DataTypes.TEXT,
+    allowNull: false
+  },
+  categoria: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  preco: {
+    type: DataTypes.FLOAT,
     allowNull: false
   },
   professorId: {
@@ -28,8 +36,5 @@ const Curso = sequelize.define('Curso', {
   timestamps: true,
   paranoid: true
 });
-
-Usuario.hasMany(Curso, { foreignKey: 'professorId' });
-Curso.belongsTo(Usuario, { foreignKey: 'professorId' });
 
 module.exports = Curso;

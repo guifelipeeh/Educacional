@@ -13,8 +13,10 @@ class AuthController {
 
   static async registrar(req, res) {
     try {
+      console.log("passou aqui")
       const usuario = await AuthService.registrar(req.body);
       res.status(201).json(usuario);
+      console.log("")
     } catch (error) {
       res.status(400).json({ error: error.message });
     }

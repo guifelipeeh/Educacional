@@ -22,7 +22,7 @@ module.exports = async (req, res, next) => {
 
     const sessao = await Sessao.findOne({ where: { token } });
 
-    if (!sessao) {
+    if (!sessao || sessao.tokenInvalido) {
       return res.status(401).json({ message: 'Token de autenticação inválido ou expirado.' });
     }
 

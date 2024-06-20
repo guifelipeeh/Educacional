@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const aulaController = require('../controllers/AulaController');
-const validateToken = require('../middleware/validateToken');
+const authMiddleware = require('../middleware/authMiddleware');
+const validarCurso = require('../middleware/validateCurso');
+const validarAula = require('../middleware/validarAula');
 
-
-router.post('/', validateToken, aulaController.criarAula);
-router.get('/',validateToken, aulaController.obterAulas);
-router.get('/:id', validateToken,aulaController.obterAulaPorId);
-router.put('/:id', validateToken, aulaController.atualizarAula);
-router.delete('/:id', validateToken, aulaController.deletarAula);
+router.post('/', authMiddleware, validarAula, aulaController.criarAula);
+router.get('/', authMiddleware, validarAula,aulaController.obterAulas);
+router.get('/:id', authMiddleware, validarAula,aulaController.obterAulaPorId);
+router.put('/:id', authMiddleware, validarAula, aulaController.atualizarAula);
+router.delete('/:id', authMiddleware, validarAula, aulaController.deletarAula);
 
 module.exports = router;

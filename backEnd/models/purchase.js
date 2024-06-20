@@ -1,6 +1,6 @@
 // models/Compra.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const sequelize = require('../configNodeMailler/database');
 const Usuario = require('./Usuario');
 const Curso = require('./Curso');
 

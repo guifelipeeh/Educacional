@@ -1,7 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const db = require('./config/database');
+const db = require('./configNodeMailler/database');
+require('./models/associations'); 
 const authRoutes = require('./routes/authRoutes');
 const usuarioRoutes = require('./routes/usuarioRoutes');
 const cursoRoutes = require('./routes/cursoRoutes');
@@ -94,7 +95,7 @@ app.get('/', (req, res) => {
 });
 
 // Sincroniza com o banco de dados e inicia o servidor
-const PORT = process.env.PORT || 3000;
+const PORT = 3001;
 db.sync({ force: false }).then(() => {
   app.listen(PORT, () => {
     console.log(`Servidor em execução na porta ${PORT}`);

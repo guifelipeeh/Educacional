@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const sequelize = require('../configurations/DataBaseConfig');
 
 const Usuario = sequelize.define('Usuario', {
   id: {
@@ -19,27 +19,6 @@ const Usuario = sequelize.define('Usuario', {
   senha: {
     type: DataTypes.STRING,
     allowNull: false
-  },
-  tipo: {
-    type: DataTypes.ENUM('admin', 'professor', 'aluno'),
-    allowNull: false
-  },
-  // Novos campos
-  cpf: {
-    type: DataTypes.STRING,
-    allowNull: true // ou false, dependendo do requisito
-  },
-  dataNascimento: {
-    type: DataTypes.DATE,
-    allowNull: true
-  },
-  endereco: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
-  telefone: {
-    type: DataTypes.STRING,
-    allowNull: true
   }
 }, {
   timestamps: true,

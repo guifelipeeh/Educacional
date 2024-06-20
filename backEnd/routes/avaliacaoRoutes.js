@@ -1,15 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const avaliacaoController = require('../controllers/avaliacaoController');
-const validateToken = require('../middleware/validateToken');
+const authMiddleware = require('../middleware/authMiddleware');
 
-
-
-
-router.post('/', validateToken, avaliacaoController.criarAvaliacao);
-router.get('/', validateToken,avaliacaoController.obterAvaliacoes);
-router.get('/:id', validateToken,avaliacaoController.obterAvaliacaoPorId);
-router.put('/:id', validateToken, avaliacaoController.atualizarAvaliacao);
-router.delete('/:id', validateToken, avaliacaoController.deletarAvaliacao);
+router.post('/', authMiddleware, avaliacaoController.criarAvaliacao);
+router.get('/', authMiddleware, avaliacaoController.obterAvaliacoes);
+router.get('/:id', authMiddleware, avaliacaoController.obterAvaliacaoPorId);
+router.put('/:id', authMiddleware, avaliacaoController.atualizarAvaliacao);
+router.delete('/:id', authMiddleware, avaliacaoController.deletarAvaliacao);
 
 module.exports = router;
