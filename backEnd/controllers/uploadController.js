@@ -1,35 +1,47 @@
-// controllers/uploadController.js
 const uploadService = require('../services/uploadService');
-
-exports.uploadFotoPerfil = (req, res) => {
-  const upload = uploadService.uploadSingleFile('fotoPerfil');
-
-  upload(req, res, (err) => {
-    if (err) {
-      return res.status(400).json({ error: err.message });
-    }
-    res.status(200).json({ filePath: req.file.path });
-  });
+const Usuario=require('../models/Usuario')
+const uploadProfilePicture = async (req, res) => {
+  try {
+    const userId = req.Usuario.id;
+    console.log(userId)
+    const result = await uploadService.saveFile(userId, req.file, 'images');
+    res.status(200).json({ message: 'Foto de perfil enviada com sucesso!', file: result });
+  } catch (error) {
+    console.error('Erro ao enviar a foto de perfil:', error);
+    res.status(400).json({ error: 'Erro ao enviar a foto de perfil' });
+  }
 };
 
-exports.uploadVideoAula = (req, res) => {
-  const upload = uploadService.uploadSingleFile('videoAula');
-
-  upload(req, res, (err) => {
-    if (err) {
-      return res.status(400).json({ error: err.message });
-    }
-    res.status(200).json({ filePath: req.file.path });
-  });
+const uploadVideo = async (req, res) => {
+  try {
+    const result = await uploadService.saveFile(userId, req.file, 'videos');
+    res.status(200).json({ message: 'Vídeo enviado com sucesso!', file: result });
+  } catch (error) {
+    console.error('Erro ao enviar o vídeo:', error);
+    res.status(400).json({ error: 'Erro ao enviar o vídeo' });
+  }
 };
 
-exports.uploadDocumentos = (req, res) => {
-  const upload = uploadService.uploadMultipleFiles('documentos', 10);
-
-  upload(req, res, (err) => {
-    if (err) {
-      return res.status(400).json({ error: err.message });
-    }
-    res.status(200).json({ files: req.files.map(file => file.path) });
-  });
+const uploadDocument = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const result = await uploadService.saveFile(userId, req.file, 'documents');
+    res.status(200).json({ message: 'Documento enviado com sucesso!', file: result });
+  } catch (error) {
+    console.error('Erro ao enviar o documento:', error);
+    res.status(400).json({ error: 'Erro ao enviar o documento' });
+  }
 };
+
+const getUserFiles = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const files = await uploadService.getUserFiles(userId);
+    res.status(200).json(files);
+  } catch (error) {
+    console.error('Erro ao buscar arquivos do usuário:', error);
+    res.status(400).json({ error: 'Erro ao buscar arquivos do usuário' });
+  }
+};
+
+module.exports = { uploadProfilePicture, uploadVideo, uploadDocument, getUserFiles };

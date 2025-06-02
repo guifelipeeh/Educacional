@@ -95,7 +95,7 @@ app.get('/', (req, res) => {
 });
 
 // Sincroniza com o banco de dados e inicia o servidor
-const PORT = 3001;
+const PORT = 3000;
 db.sync({ force: false }).then(() => {
   app.listen(PORT, () => {
     console.log(`Servidor em execução na porta ${PORT}`);

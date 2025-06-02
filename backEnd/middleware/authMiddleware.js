@@ -1,6 +1,6 @@
-const Sessao = require('../models/Sessao');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
+const Sessao = require('../models/Sessao');
 const Usuario = require('../models/Usuario');
 
 dotenv.config();
@@ -30,7 +30,7 @@ module.exports = async (req, res, next) => {
 
     // Verificar se o token está expirado
     if (decoded.exp <= Date.now() / 1000) {
-      await sessao.update({ tokenInvalido: true }); // Marcar o token como inválido se estiver expirado
+      await sessao.update({ tokenInvalido: true });
       return res.status(401).json({ message: 'Token de autenticação expirado.' });
     }
 
@@ -41,10 +41,10 @@ module.exports = async (req, res, next) => {
       return res.status(401).json({ message: 'Usuário não encontrado.' });
     }
 
-    req.usuario = { id: usuario.id, email: usuario.email, tipo: usuario.tipo };
+    req.user = { id: usuario.id, email: usuario.email, tipo: usuario.tipo };
     next();
   } catch (error) {
-    console.log('Erro na autenticação:', error);
+    console.error('Erro na autenticação:', error);
     return res.status(401).json({ message: 'Token de autenticação inválido.' });
   }
 };

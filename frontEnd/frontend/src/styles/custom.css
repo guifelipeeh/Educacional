@@ -1,0 +1,18 @@
+/* src/styles/custom.css */
+.centered-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+  }
+  
+  .full-width-button {
+    width: 100%;
+    margin: 5px 0;
+  }
+  p{
+ 
+    
+    
+  }

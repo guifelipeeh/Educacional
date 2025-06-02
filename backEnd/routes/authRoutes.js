@@ -5,8 +5,7 @@ const validateLogin = require('../middleware/validateLogin');
 const validateCadastro = require('../middleware/validateCadastro');
 const authMiddleware = require('../middleware/authMiddleware'); // Importe o middleware authMiddleware
 
-
-router.post('/login', validateLogin, authController.login);
+router.post('/login', validateLogin,authController.login);
 
 
 router.post('/register', validateCadastro, authController.registrar);
@@ -21,3 +20,4 @@ router.post('/recover', authController.recoverPasswordOrUsername);
 router.post('/reset',authMiddleware, authController.resetPassword);
 
 module.exports = router;
+

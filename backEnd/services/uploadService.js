@@ -1,47 +1,47 @@
-// services/uploadService.js
-const multer = require('multer');
-const path = require('path');
+const uploadService = require('../services/uploadService');
 
-// Configuração do armazenamento dos arquivos
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    let uploadPath;
-
-    switch (file.fieldname) {
-      case 'fotoPerfil':
-        uploadPath = 'uploads/fotosPerfil';
-        break;
-      case 'videoAula':
-        uploadPath = 'uploads/videosAula';
-        break;
-      case 'documentos':
-        uploadPath = 'uploads/documentos';
-        break;
-      default:
-        uploadPath = 'uploads/others';
-    }
-
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}_${file.originalname}`);
-  }
-});
-
-// Configuração dos filtros de arquivos
-const fileFilter = (req, file, cb) => {
-  // Exemplo de filtro: apenas arquivos de imagem
-  if (file.fieldname === 'fotoPerfil' && !file.mimetype.startsWith('image')) {
-    cb(new Error('Apenas imagens são permitidas para fotoPerfil.'), false);
-  } else {
-    cb(null, true);
+const uploadProfilePicture = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const result = await uploadService.saveFile(userId, req.file, 'images');
+    res.status(200).json({ message: 'Foto de perfil enviada com sucesso!', file: result });
+  } catch (error) {
+    console.error('Erro ao enviar a foto de perfil:', error);
+    res.status(400).json({ error: 'Erro ao enviar a foto de perfil' });
   }
 };
 
-const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter
-});
+const uploadVideo = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const result = await uploadService.saveFile(userId, req.file, 'videos');
+    res.status(200).json({ message: 'Vídeo enviado com sucesso!', file: result });
+  } catch (error) {
+    console.error('Erro ao enviar o vídeo:', error);
+    res.status(400).json({ error: 'Erro ao enviar o vídeo' });
+  }
+};
 
-exports.uploadSingleFile = (fieldName) => upload.single(fieldName);
-exports.uploadMultipleFiles = (fieldName, maxCount) => upload.array(fieldName, maxCount);
+const uploadDocument = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const result = await uploadService.saveFile(userId, req.file, 'documents');
+    res.status(200).json({ message: 'Documento enviado com sucesso!', file: result });
+  } catch (error) {
+    console.error('Erro ao enviar o documento:', error);
+    res.status(400).json({ error: 'Erro ao enviar o documento' });
+  }
+};
+
+const getUserFiles = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const files = await uploadService.getUserFiles(userId);
+    res.status(200).json(files);
+  } catch (error) {
+    console.error('Erro ao buscar arquivos do usuário:', error);
+    res.status(400).json({ error: 'Erro ao buscar arquivos do usuário' });
+  }
+};
+
+module.exports = { uploadProfilePicture, uploadVideo, uploadDocument, getUserFiles };

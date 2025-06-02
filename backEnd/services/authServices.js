@@ -8,7 +8,13 @@ const MsgHTML = require('../configNodeMailler/mensage');
 
 class AuthService {
   static async registrar(dados) {
-    const { senha } = dados;
+    const { email, cpf, senha } = dados;
+
+    // Verificar se já existe um usuário com o mesmo email ou CPF
+    const usuarioExistente = await Usuario.findOne({ where: { email } }) || await Usuario.findOne({ where: { cpf } });
+    if (usuarioExistente) {
+      throw new Error('Usuário com o mesmo email ou CPF já existe');
+    }
     const senhaHash = await bcrypt.hash(senha, 10);
     dados.senha = senhaHash;
     return await Usuario.create(dados);
@@ -20,11 +26,11 @@ class AuthService {
       throw new Error('Usuário não encontrado');
     }
 
-    const sessaoExistente = await Sessao.findOne({ where: { usuarioId: usuario.id, tokenInvalido: false } });
-
-    if (sessaoExistente) {
-      throw new Error('Usuário já está logado.');
-    }
+    // Invalidar todas as sessões anteriores do usuário
+    await Sessao.update(
+      { tokenInvalido: true },
+      { where: { usuarioId: usuario.id, tokenInvalido: false } }
+    );
 
     const senhaValida = await bcrypt.compare(senha, usuario.senha);
     if (!senhaValida) {
@@ -34,7 +40,7 @@ class AuthService {
     const token = jwt.sign({ id: usuario.id, email: usuario.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
     const expiracao = moment().tz('America/Sao_Paulo').add(1, 'hour').toDate();
 
-    await Sessao.create({ usuarioId: usuario.id, token, expiracao });
+    await Sessao.create({ usuarioId: usuario.id, token, expiracao, tokenInvalido: false });
 
     return { token, usuario };
   }
@@ -57,7 +63,7 @@ class AuthService {
     await usuario.update({ senha: senhaHash });
 
     const mailOptions = {
-      from: process.env.EMAIL_USER + "<Educacional APP Ltda>",
+      from: `${process.env.EMAIL_USER} <Educacional APP Ltda>`,
       to: email,
       subject: 'Recuperação de Senha',
       text: `Sua nova senha é: ${newPassword}`,

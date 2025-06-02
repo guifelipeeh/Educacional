@@ -1,12 +1,15 @@
 // src/pages/LoginPage.js
 
 import React from 'react';
-import Login from '../components/Login';
+import Login from '../components/Auth/Login';
+
+
 
 const LoginPage = () => {
   return (
-    <div>
+    <div className="login-page">
       <h2>Login</h2>
+    
       <Login/>
     </div>
   );

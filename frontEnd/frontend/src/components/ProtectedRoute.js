@@ -6,6 +6,7 @@ const isAuthenticated = () => {
   return !!token;
 };
 
+
 const ProtectedRoute = () => {
   return isAuthenticated() ? <Outlet /> : <Navigate to="/login" />;
 };

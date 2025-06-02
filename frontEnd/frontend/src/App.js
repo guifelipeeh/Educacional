@@ -1,23 +1,27 @@
 // src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
- // Se necessário, importe seus estilos adicionais
-import { Container } from 'react-bootstrap'; // Exemplo de importação de componente do react-bootstrap
+import { Container } from 'react-bootstrap'; 
 import Home from './pages/Home';
 import Login from './components/Auth/Login';
 import Logout from './components/Auth/Logout';
 import Register from './components/Auth/Register';
-import ProtectedRoute from './components/ProtectedRoute';
+import UploadTest from './components/Auth/UploadTest';
+import profile from './pages/Profile';
+import './styles/App.css';
+
 
 function App() {
   return (
     <Router>
-      <Container className="py-4"> {/* Utilize o Container do react-bootstrap para alinhar o conteúdo */}
+      <Container fluid className="py-5 vh-100"> {/* Adicione o fluid para ocupar toda a tela */}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/uploadTest" element={<UploadTest />} />
+          <Route path="/profile" element={<profile />} />
           {/* Adicione outras rotas aqui */}
         </Routes>
       </Container>
